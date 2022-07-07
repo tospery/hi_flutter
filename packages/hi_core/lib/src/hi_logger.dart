@@ -5,7 +5,7 @@ import 'package:logger/logger.dart';
 enum HiLogLevel { verbose, debug, info, warning, error }
 
 class HiLogger {
-  final _logger = Logger();
+  final _logger = Logger(printer: SimplePrinter(printTime: true));
 
   static HiLogger? _instance;
   static HiLogger sharedInstance() {
@@ -37,6 +37,6 @@ class HiLogger {
   }
 }
 
-void log(dynamic message, {HiLogLevel level = HiLogLevel.info}) {
+void log(dynamic message, {HiLogLevel level = HiLogLevel.debug}) {
   HiLogger.sharedInstance().log(message, level: level);
 }
