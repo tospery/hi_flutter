@@ -1,7 +1,6 @@
 library hi_router_x;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'package:fluro/fluro.dart';
+
+export 'src/core.dart';
+export 'src/router.dart';
