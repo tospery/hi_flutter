@@ -1,47 +1,43 @@
-import 'package:fluro/fluro.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hi_router_x/hi_router_x.dart';
 
 class HiRouter {
-  VoidCallback? _myinit;
-  final innerRouter = FluroRouter();
+  // VoidCallback? _myinit;
+  final _router = FluroRouter();
 
   static HiRouter? _instance;
-  static HiRouter sharedInstance() {
+  static HiRouter shared() {
     _instance ??= HiRouter._();
-    // if (_instance == null) {
-    //   _instance = HiRouter._();
-    //   if (_instance! is HiRouterConfiguration) {
-    //     (_instance! as HiRouterConfiguration).configure();
-    //   } else {
-    //     _instance!.myConfigure();
-    //   }
-    // }
     return _instance!;
   }
 
+  HiRouter._() {
+    _initialize();
+  }
+
+  void _initialize() {
+    _router.notFoundHandler = Handler(
+        handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+      if (kDebugMode) {
+        print("ROUTE WAS NOT FOUND !!!");
+      }
+      return;
+    });
+  }
+
+  Route<dynamic>? generator(RouteSettings routeSettings) =>
+      _router.generator(routeSettings);
+
   void define(String path,
-      {HiRouterType type = HiRouterType.route, required HiRouterFunc func}) {
-    var handler = Handler(type: type.rawValue, handlerFunc: func);
-    innerRouter.define(path, handler: handler);
-  }
+          {HiRouterType type = HiRouterType.route,
+          required HiRouterFunc func}) =>
+      _router.define(path,
+          handler: Handler(type: type.rawValue, handlerFunc: func));
 
-  void configure(VoidCallback myinit) {
-    _myinit = myinit;
-    _myinit!();
-  }
+  void navigateTo(BuildContext context, String path) =>
+      _router.navigateTo(context, path);
 
-  void navigateTo(BuildContext context, String path) {
-    innerRouter.navigateTo(context, path);
-  }
-
-  void show() {}
-
-  HiRouter._();
+  void navigateBack<T>(BuildContext context, [T? result]) =>
+      _router.pop(context, result);
 }
-
-// mixin HiRouterConfiguration {
-//   void configure() {
-//     print('ineer configure');
-//   }
-// }
