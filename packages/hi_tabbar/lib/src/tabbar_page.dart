@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hi_core/hi_core.dart';
 import 'package:hi_tabbar/src/tabbar_info.dart';
 
 class HiTabBarPage extends StatefulWidget {

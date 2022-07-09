@@ -16,6 +16,8 @@ dependencies:
       path: ../hi_core
   hi_router_x:
       path: ../hi_router_x
+  hi_tabbar:
+      path: ../hi_tabbar
   hi_cache:
       path: ../hi_cache
   hi_http:
