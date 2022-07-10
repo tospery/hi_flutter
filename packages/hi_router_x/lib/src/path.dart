@@ -10,7 +10,7 @@ enum HiRouterPath {
 
   static const String root = '/';
 
-  String get value => '/$rawValue';
+  String get value => '/$instanceName';
 
   // home(value: '/home'),
   // profile(value: '/profile'),

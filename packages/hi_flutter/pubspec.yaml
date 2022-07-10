@@ -1,8 +1,7 @@
 name: hi_flutter
-description: Flutter Application Framework.
+description: hi flutter
 version: 1.0.0
 homepage: https://github.com/tospery/hi_flutter
-
 publish_to: 'none'
 
 environment:
@@ -18,12 +17,6 @@ dependencies:
       path: ../hi_router_x
   hi_tabbar:
       path: ../hi_tabbar
-  hi_cache:
-      path: ../hi_cache
-  hi_http:
-      path: ../hi_http
-  hi_dao:
-      path: ../hi_dao
 
 dev_dependencies:
   flutter_test:
