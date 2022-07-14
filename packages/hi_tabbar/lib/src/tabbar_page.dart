@@ -1,51 +1,166 @@
 import 'package:flutter/material.dart';
-import 'package:hi_tabbar/src/tabbar_info.dart';
+import 'package:hi_tabbar/src/tabbar.dart' as hi_tabbar;
 
-class HiTabBarPage extends StatefulWidget {
-  final List<HiTabBarInfo> infos;
+///支持顶部和顶部的TabBar控件
+///配合AutomaticKeepAliveClientMixin可以keep住
+class GSYTabBarWidget extends StatefulWidget {
+  final TabType type;
 
-  const HiTabBarPage({super.key, required this.infos});
+  final bool resizeToAvoidBottomPadding;
+
+  final List<Widget>? tabItems;
+
+  final List<Widget>? tabViews;
+
+  final Color? backgroundColor;
+
+  final Color? indicatorColor;
+
+  final Widget? title;
+
+  final Widget? drawer;
+
+  final Widget? floatingActionButton;
+
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
+
+  final Widget? bottomBar;
+
+  final List<Widget>? footerButtons;
+
+  final ValueChanged<int>? onPageChanged;
+  final ValueChanged<int>? onDoublePress;
+  final ValueChanged<int>? onSinglePress;
+
+  const GSYTabBarWidget({
+    super.key,
+    this.type = TabType.top,
+    this.tabItems,
+    this.tabViews,
+    this.backgroundColor,
+    this.indicatorColor,
+    this.title,
+    this.drawer,
+    this.bottomBar,
+    this.onDoublePress,
+    this.onSinglePress,
+    this.floatingActionButtonLocation,
+    this.floatingActionButton,
+    this.resizeToAvoidBottomPadding = true,
+    this.footerButtons,
+    this.onPageChanged,
+  });
 
   @override
-  State<HiTabBarPage> createState() => _HiTabBarPageState();
+  // ignore: library_private_types_in_public_api
+  _GSYTabBarState createState() => _GSYTabBarState();
 }
 
-class _HiTabBarPageState extends State<HiTabBarPage> {
-  int _currentIndex = 0;
-  final PageController _controller = PageController(initialPage: 0);
+class _GSYTabBarState extends State<GSYTabBarWidget>
+    with SingleTickerProviderStateMixin {
+  final PageController _pageController = PageController();
+
+  TabController? _tabController;
+
+  int _index = 0;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        physics: const NeverScrollableScrollPhysics(),
-        controller: _controller,
-        children: widget.infos.map((info) => info.page).toList(),
-        onPageChanged: (index) => _onJumpTo(index, pageChanged: true),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _currentIndex,
-        selectedItemColor: Colors.red,
-        items: widget.infos.map((info) => info.item).toList(),
-        onTap: (index) => _onJumpTo(index),
-      ),
-    );
+  void initState() {
+    super.initState();
+    _tabController =
+        TabController(vsync: this, length: widget.tabItems!.length);
   }
 
+  ///整个页面dispose时，记得把控制器也dispose掉，释放内存
   @override
   void dispose() {
-    _controller.dispose();
+    _tabController!.dispose();
     super.dispose();
   }
 
-  _onJumpTo(int index, {bool pageChanged = false}) {
-    if (pageChanged) {
-    } else {
-      _controller.jumpToPage(index);
+  _navigationPageChanged(index) {
+    if (_index == index) {
+      return;
     }
-    setState(() {
-      _currentIndex = index;
-    });
+    _index = index;
+    _tabController!.animateTo(index);
+    widget.onPageChanged?.call(index);
+  }
+
+  _navigationTapClick(index) {
+    if (_index == index) {
+      return;
+    }
+    _index = index;
+    widget.onPageChanged?.call(index);
+
+    ///不想要动画
+    _pageController.jumpTo(MediaQuery.of(context).size.width * index);
+    widget.onSinglePress?.call(index);
+  }
+
+  _navigationDoubleTapClick(index) {
+    _navigationTapClick(index);
+    widget.onDoublePress?.call(index);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.type == TabType.top) {
+      ///顶部tab bar
+      return Scaffold(
+        resizeToAvoidBottomInset: widget.resizeToAvoidBottomPadding,
+        floatingActionButton:
+            SafeArea(child: widget.floatingActionButton ?? Container()),
+        floatingActionButtonLocation: widget.floatingActionButtonLocation,
+        persistentFooterButtons: widget.footerButtons,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          title: widget.title,
+          bottom: TabBar(
+              controller: _tabController,
+              tabs: widget.tabItems!,
+              indicatorColor: widget.indicatorColor,
+              onTap: _navigationTapClick),
+        ),
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: _navigationPageChanged,
+          children: widget.tabViews!,
+        ),
+        bottomNavigationBar: widget.bottomBar,
+      );
+    }
+
+    ///底部tab bar
+    return Scaffold(
+        drawer: widget.drawer,
+        appBar: widget.title != null ? AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          title: widget.title,
+        ) : null,
+        body: PageView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: _pageController,
+          onPageChanged: _navigationPageChanged,
+          children: widget.tabViews!,
+        ),
+        bottomNavigationBar: Material(
+          //为了适配主题风格，包一层Material实现风格套用
+          color: Theme.of(context).primaryColor, //底部导航栏主题颜色
+          child: SafeArea(
+            child: hi_tabbar.TabBar(
+              //TabBar导航标签，底部导航放到Scaffold的bottomNavigationBar中
+              controller: _tabController,
+              //配置控制器
+              tabs: widget.tabItems!,
+              indicatorColor: widget.indicatorColor,
+              onDoubleTap: _navigationDoubleTapClick,
+              onTap: _navigationTapClick, //tab标签的下划线颜色
+            ),
+          ),
+        ));
   }
 }
+
+enum TabType { top, bottom }
