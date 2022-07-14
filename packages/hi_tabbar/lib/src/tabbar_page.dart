@@ -1,40 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:hi_tabbar/src/tabbar.dart' as hi_tabbar;
+import 'package:hi_tabbar/src/core.dart';
+import 'package:hi_tabbar/src/tabbar.dart';
 
-///支持顶部和顶部的TabBar控件
-///配合AutomaticKeepAliveClientMixin可以keep住
-class GSYTabBarWidget extends StatefulWidget {
-  final TabType type;
-
+class HiTabBarPage extends StatefulWidget {
+  final HiTabBarPosition position;
   final bool resizeToAvoidBottomPadding;
-
   final List<Widget>? tabItems;
-
   final List<Widget>? tabViews;
-
   final Color? backgroundColor;
-
   final Color? indicatorColor;
-
   final Widget? title;
-
   final Widget? drawer;
-
   final Widget? floatingActionButton;
-
   final FloatingActionButtonLocation? floatingActionButtonLocation;
-
   final Widget? bottomBar;
-
   final List<Widget>? footerButtons;
-
   final ValueChanged<int>? onPageChanged;
   final ValueChanged<int>? onDoublePress;
   final ValueChanged<int>? onSinglePress;
 
-  const GSYTabBarWidget({
+  const HiTabBarPage({
     super.key,
-    this.type = TabType.top,
+    this.position = HiTabBarPosition.top,
     this.tabItems,
     this.tabViews,
     this.backgroundColor,
@@ -53,16 +40,14 @@ class GSYTabBarWidget extends StatefulWidget {
 
   @override
   // ignore: library_private_types_in_public_api
-  _GSYTabBarState createState() => _GSYTabBarState();
+  _HiTabBarPageState createState() => _HiTabBarPageState();
 }
 
-class _GSYTabBarState extends State<GSYTabBarWidget>
+class _HiTabBarPageState extends State<HiTabBarPage>
     with SingleTickerProviderStateMixin {
-  final PageController _pageController = PageController();
-
-  TabController? _tabController;
-
   int _index = 0;
+  TabController? _tabController;
+  final PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -71,7 +56,64 @@ class _GSYTabBarState extends State<GSYTabBarWidget>
         TabController(vsync: this, length: widget.tabItems!.length);
   }
 
-  ///整个页面dispose时，记得把控制器也dispose掉，释放内存
+  @override
+  Widget build(BuildContext context) {
+    if (widget.position == HiTabBarPosition.top) {
+      return Scaffold(
+        resizeToAvoidBottomInset: widget.resizeToAvoidBottomPadding,
+        floatingActionButton:
+            SafeArea(child: widget.floatingActionButton ?? Container()),
+        floatingActionButtonLocation: widget.floatingActionButtonLocation,
+        persistentFooterButtons: widget.footerButtons,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          title: widget.title,
+          bottom: TabBar(
+              controller: _tabController,
+              tabs: widget.tabItems!,
+              indicatorColor: widget.indicatorColor,
+              onTap: _navigationTapClick),
+        ),
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: _navigationPageChanged,
+          children: widget.tabViews!,
+        ),
+        bottomNavigationBar: widget.bottomBar,
+      );
+    }
+
+    return Scaffold(
+      drawer: widget.drawer,
+      appBar: widget.title != null
+          ? AppBar(
+              backgroundColor: Theme.of(context).primaryColor,
+              title: widget.title,
+            )
+          : null,
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _pageController,
+        onPageChanged: _navigationPageChanged,
+        children: widget.tabViews!,
+      ),
+      bottomNavigationBar: Material(
+        color: Theme.of(context).primaryColor, //底部导航栏主题颜色
+        child: SafeArea(
+          child: HiTabBar(
+            //TabBar导航标签，底部导航放到Scaffold的bottomNavigationBar中
+            controller: _tabController,
+            //配置控制器
+            tabs: widget.tabItems!,
+            indicatorColor: widget.indicatorColor,
+            onDoubleTap: _navigationDoubleTapClick,
+            onTap: _navigationTapClick, //tab标签的下划线颜色
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _tabController!.dispose();
@@ -103,64 +145,4 @@ class _GSYTabBarState extends State<GSYTabBarWidget>
     _navigationTapClick(index);
     widget.onDoublePress?.call(index);
   }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.type == TabType.top) {
-      ///顶部tab bar
-      return Scaffold(
-        resizeToAvoidBottomInset: widget.resizeToAvoidBottomPadding,
-        floatingActionButton:
-            SafeArea(child: widget.floatingActionButton ?? Container()),
-        floatingActionButtonLocation: widget.floatingActionButtonLocation,
-        persistentFooterButtons: widget.footerButtons,
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          title: widget.title,
-          bottom: TabBar(
-              controller: _tabController,
-              tabs: widget.tabItems!,
-              indicatorColor: widget.indicatorColor,
-              onTap: _navigationTapClick),
-        ),
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: _navigationPageChanged,
-          children: widget.tabViews!,
-        ),
-        bottomNavigationBar: widget.bottomBar,
-      );
-    }
-
-    ///底部tab bar
-    return Scaffold(
-        drawer: widget.drawer,
-        appBar: widget.title != null ? AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          title: widget.title,
-        ) : null,
-        body: PageView(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: _pageController,
-          onPageChanged: _navigationPageChanged,
-          children: widget.tabViews!,
-        ),
-        bottomNavigationBar: Material(
-          //为了适配主题风格，包一层Material实现风格套用
-          color: Theme.of(context).primaryColor, //底部导航栏主题颜色
-          child: SafeArea(
-            child: hi_tabbar.TabBar(
-              //TabBar导航标签，底部导航放到Scaffold的bottomNavigationBar中
-              controller: _tabController,
-              //配置控制器
-              tabs: widget.tabItems!,
-              indicatorColor: widget.indicatorColor,
-              onDoubleTap: _navigationDoubleTapClick,
-              onTap: _navigationTapClick, //tab标签的下划线颜色
-            ),
-          ),
-        ));
-  }
 }
-
-enum TabType { top, bottom }

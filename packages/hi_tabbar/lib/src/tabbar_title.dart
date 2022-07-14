@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 
-class GSYTitleBar extends StatelessWidget {
+class HiTabBarTitle extends StatelessWidget {
   final String? title;
-
   final IconData? iconData;
-
   final ValueChanged? onRightIconPressed;
-
   final bool needRightLocalIcon;
-
   final Widget? rightWidget;
-
   final GlobalKey rightKey = GlobalKey();
 
-  GSYTitleBar(this.title,
-      {Key? key, this.iconData,
-      this.onRightIconPressed,
-      this.needRightLocalIcon = false,
-      this.rightWidget}) : super(key: key);
+  HiTabBarTitle(
+    this.title, {
+    Key? key,
+    this.iconData,
+    this.onRightIconPressed,
+    this.needRightLocalIcon = false,
+    this.rightWidget,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
