@@ -21,7 +21,7 @@ class HiTabBarPage extends StatefulWidget {
 
   const HiTabBarPage({
     super.key,
-    this.position = HiTabBarPosition.top,
+    this.position = HiTabBarPosition.bottom,
     this.tabItems,
     this.tabViews,
     this.backgroundColor,
