@@ -35,8 +35,15 @@ class HiRouter {
       _router.define(path,
           handler: Handler(type: type.rawValue, handlerFunc: func));
 
-  void navigateTo(BuildContext context, String path) =>
-      _router.navigateTo(context, path);
+  void navigateTo(BuildContext context, String path,
+          {HiTransitionType? transition}) =>
+      _router.navigateTo(context, path, transition: transition?.rawValue);
+
+  void push(BuildContext context, String path) => _router
+      .navigateTo(context, path, transition: HiTransitionType.push.rawValue);
+
+  void present(BuildContext context, String path) => _router
+      .navigateTo(context, path, transition: HiTransitionType.present.rawValue);
 
   void navigateBack<T>(BuildContext context, [T? result]) =>
       _router.pop(context, result);
