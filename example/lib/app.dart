@@ -15,6 +15,7 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: HiRouter.shared().generator,
+      builder: EasyLoading.init(),
     );
   }
 }

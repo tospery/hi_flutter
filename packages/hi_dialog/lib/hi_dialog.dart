@@ -1,7 +1,9 @@
 library hi_dialog;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'package:fluttertoast/fluttertoast.dart';
+export 'package:flutter_easyloading/flutter_easyloading.dart';
+
+export 'src/toast.dart';
+export 'src/alert.dart';
+export 'src/sheet.dart';
+export 'src/popup.dart';

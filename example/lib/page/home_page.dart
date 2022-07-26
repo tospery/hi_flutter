@@ -1,4 +1,6 @@
+import 'package:example/router/path.dart';
 import 'package:flutter/material.dart';
+import 'package:hi_flutter/hi_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,10 +18,17 @@ class _HomePageState extends State<HomePage> {
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
+        itemExtent: 44,
         children: [
           InkWell(
             onTap: () {},
             child: const Text('Core'),
+          ),
+          InkWell(
+            onTap: () {
+              HiRouter.shared().navigateTo(context, HiRouterPathEx.dialog);
+            },
+            child: const Text('Dialog'),
           )
         ],
       ),
