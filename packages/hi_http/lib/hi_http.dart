@@ -1,7 +1,9 @@
 library hi_http;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'package:dio/dio.dart';
+
+export 'src/error.dart';
+export 'src/request.dart';
+export 'src/response.dart';
+export 'src/adapter.dart';
+export 'src/client.dart';
