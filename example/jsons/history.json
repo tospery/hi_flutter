@@ -1,0 +1,6 @@
+{
+    "day":"7/26",
+    "date":"146年7月26日",
+    "title":"梁冀鸩杀汉质帝",
+    "@JsonKey(name: 'e_id') late String": "id"
+}

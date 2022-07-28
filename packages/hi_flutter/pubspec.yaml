@@ -19,6 +19,8 @@ dependencies:
       path: ../hi_tabbar
   hi_dialog:
       path: ../hi_dialog
+  hi_http:
+      path: ../hi_http
 
 dev_dependencies:
   flutter_test:

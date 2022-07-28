@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:hi_http/src/model.dart';
 import 'package:hi_http/src/request.dart';
 
 class HiHttpResponse {
@@ -22,12 +23,12 @@ class HiHttpResponse {
   }
 }
 
-class HiBaseResponse<T> {
+class HiBaseResponse<T> extends ModelType {
   final int code;
   final String message;
   final T? data;
 
-  HiBaseResponse(this.data, {this.code = 200, this.message = ''});
+  HiBaseResponse(this.data, {this.code = 0, this.message = ''}) : super(code.toString());
 
   @override
   String toString() {
@@ -37,4 +38,21 @@ class HiBaseResponse<T> {
     }
     return '【$code, $message】$string';
   }
+  
+  @override
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic>? dataJson;
+    if (data is ModelType) {
+      dataJson = (data as ModelType).toJson();
+    }
+    return {
+      'id': int.parse(id),
+      'code': code,
+      'message': message,
+      'data': dataJson,
+    };
+  }
+  
 }
+
+// class HiBaseData<T> 

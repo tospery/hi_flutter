@@ -6,4 +6,5 @@ export 'src/error.dart';
 export 'src/request.dart';
 export 'src/response.dart';
 export 'src/adapter.dart';
-export 'src/client.dart';
+export 'src/http.dart';
+export 'src/model.dart';

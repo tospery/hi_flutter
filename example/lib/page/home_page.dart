@@ -29,7 +29,13 @@ class _HomePageState extends State<HomePage> {
               HiRouter.shared().navigateTo(context, HiRouterPathEx.dialog);
             },
             child: const Text('Dialog'),
-          )
+          ),
+          InkWell(
+            onTap: () {
+              HiRouter.shared().navigateTo(context, HiRouterPathEx.http);
+            },
+            child: const Text('Http'),
+          ),
         ],
       ),
     );

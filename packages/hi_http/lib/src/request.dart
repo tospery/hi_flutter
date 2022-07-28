@@ -6,10 +6,7 @@ abstract class HiBaseRequest {
   var parameter = <String, String>{};
   var header = <String, dynamic>{};
 
-  String host() {
-    return '';
-  }
-
+  String host();
   String? path();
   HiHttpMethod method();
   bool needLogin();
