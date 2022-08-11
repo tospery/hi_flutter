@@ -1,0 +1,21 @@
+name: hi_router_x
+description: hi router x
+version: 1.0.0
+homepage: https://github.com/tospery/hi_flutter
+publish_to: 'none'
+
+environment:
+  sdk: ">=2.17.5 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fluro: 2.0.3
+  hi_core:
+      path: ../hi_core
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
